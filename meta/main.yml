@@ -1,6 +1,7 @@
 ---
 galaxy_info:
-  author: melbine
+  author: themelbine
+  namespace: themelbine
   description: Installs and configures Cloudflare WARP using wgcf and WireGuard
   company: ""
   

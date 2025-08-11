@@ -1,6 +1,6 @@
 # Ansible Role: Cloudflare WARP Native
 
-[![Ansible Galaxy](https://img.shields.io/badge/ansible--galaxy-melbine.warp__native-blue.svg)](https://galaxy.ansible.com/melbine/warp_native)
+[![Ansible Galaxy](https://img.shields.io/badge/ansible--galaxy-themelbine.warp__native-blue.svg)](https://galaxy.ansible.com/themelbine/warp_native)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 Ansible роль для установки и настройки Cloudflare WARP через wgcf и WireGuard. Настраивает сетевой интерфейс и проверяет handshake подключение. Поддерживает два состояния: `present` и `absent`.
@@ -63,6 +63,12 @@ Ansible роль для установки и настройки Cloudflare WARP
 ansible-galaxy collection install community.general
 ```
 
+## Установка
+
+```bash
+ansible-galaxy install themelbine.warp_native
+```
+
 ## Пример использования
 
 ### Базовый playbook
@@ -71,7 +77,7 @@ ansible-galaxy collection install community.general
 - hosts: warp_servers
   become: yes
   roles:
-    - melbine.warp_native
+    - themelbine.warp_native
 ```
 
 ### Групповые переменные
