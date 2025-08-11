@@ -1,5 +1,5 @@
 ---
-- name: get wg show
+- name: Get WG show
   ansible.builtin.command: wg show {{ warp_native_conf_name | splitext | first }}
   register: warp_native_wg_show
   changed_when: false
@@ -9,7 +9,7 @@
   retries: "{{ warp_native_check_retries }}"
   delay: "{{ warp_native_check_delay }}"
 
-- name: warp trace via curl
+- name: WARP trace via curl
   ansible.builtin.command:
     argv:
       - curl

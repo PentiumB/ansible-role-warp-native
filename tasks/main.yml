@@ -1,20 +1,20 @@
 ---
-- name: include present install
+- name: Include present install
   ansible.builtin.include_tasks: install.yml
   when: warp_native_state == 'present'
 
-- name: include present wgcf
+- name: Include present wgcf
   ansible.builtin.include_tasks: wgcf.yml
   when: warp_native_state == 'present'
 
-- name: include present configure
+- name: Include present configure
   ansible.builtin.include_tasks: configure.yml
   when: warp_native_state == 'present'
 
-- name: include present verify
+- name: Include present verify
   ansible.builtin.include_tasks: verify.yml
   when: warp_native_state == 'present'
 
-- name: include absent uninstall
+- name: Include absent uninstall
   ansible.builtin.include_tasks: uninstall.yml
   when: warp_native_state == 'absent'

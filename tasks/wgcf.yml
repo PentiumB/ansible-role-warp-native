@@ -1,32 +1,34 @@
 ---
-- name: set wgcf arch
+- name: Set wgcf arch
   ansible.builtin.set_fact:
     warp_native_wgcf_arch: "{{ warp_native_wgcf_arch_map[ansible_architecture] | default('linux_amd64') }}"
 
-- name: get latest wgcf release
+- name: Get latest wgcf release
   ansible.builtin.uri:
     url: https://api.github.com/repos/ViRb3/wgcf/releases/latest
     return_content: true
   register: warp_native_wgcf_api
   when: warp_native_wgcf_version == "latest"
 
-- name: set wgcf version tag from api
+- name: Set wgcf version tag from API
   ansible.builtin.set_fact:
     warp_native_wgcf_ver_tag: "{{ warp_native_wgcf_api.json.tag_name }}"
   when: warp_native_wgcf_version == "latest"
 
-- name: set wgcf version tag explicit
+- name: Set wgcf version tag explicit
   ansible.builtin.set_fact:
     warp_native_wgcf_ver_tag: "{{ warp_native_wgcf_version }}"
   when: warp_native_wgcf_version != "latest"
 
-- name: download wgcf binary
+- name: Download wgcf binary
   ansible.builtin.get_url:
-    url: "https://github.com/ViRb3/wgcf/releases/download/{{ warp_native_wgcf_ver_tag }}/wgcf_{{ warp_native_wgcf_ver_tag | regex_replace('^v','') }}_{{ warp_native_wgcf_arch }}"
+    url: >-
+      https://github.com/ViRb3/wgcf/releases/download/{{ warp_native_wgcf_ver_tag }}/
+      wgcf_{{ warp_native_wgcf_ver_tag | regex_replace('^v', '') }}_{{ warp_native_wgcf_arch }}
     dest: "{{ warp_native_wgcf_install_path }}"
     mode: "0755"
 
-- name: register wgcf account
+- name: Register wgcf account
   ansible.builtin.expect:
     command: "{{ warp_native_wgcf_install_path }} register"
     responses:
@@ -38,17 +40,17 @@
   changed_when: "'Created' in warp_native_register.stdout or 'successfully' in warp_native_register.stdout or warp_native_register.rc == 0"
   failed_when: false
 
-- name: check wgcf account file presence
+- name: Check wgcf account file presence
   ansible.builtin.stat:
     path: "{{ ansible_env.HOME }}/wgcf-account.toml"
   register: warp_native_account_stat
 
-- name: fail if account file not created
+- name: Fail if account file not created
   ansible.builtin.fail:
     msg: wgcf-account.toml was not created
   when: not warp_native_account_stat.stat.exists
 
-- name: generate wgcf profile
+- name: Generate wgcf profile
   ansible.builtin.command: "{{ warp_native_wgcf_install_path }} generate"
   args:
     chdir: "{{ ansible_env.HOME }}"
