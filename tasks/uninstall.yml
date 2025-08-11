@@ -60,13 +60,13 @@
     state: absent
   when: warp_native_modify_resolv and warp_native_cleanup_dns_backup
 
-- name: Remove WireGuard package on Debian family
+- name: Remove WireGuard package on Debian/Ubuntu
   ansible.builtin.apt:
     name: wireguard
     state: absent
     purge: true
     update_cache: false
-  when: ansible_os_family == "Debian" and warp_native_remove_wireguard_pkg
+  when: ansible_distribution in ["Debian", "Ubuntu"] and warp_native_remove_wireguard_pkg
 
 - name: Daemon reload
   ansible.builtin.systemd:
