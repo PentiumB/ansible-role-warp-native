@@ -1,0 +1,76 @@
+---
+- name: ensure wireguard dir
+  ansible.builtin.file:
+    path: "{{ warp_native_conf_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: copy generated profile
+  ansible.builtin.copy:
+    src: "{{ ansible_env.HOME }}/wgcf-profile.conf"
+    dest: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
+    remote_src: true
+  notify: restart warp
+
+- name: remove dns line
+  ansible.builtin.lineinfile:
+    path: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
+    regexp: '^DNS ='
+    state: absent
+  notify: restart warp
+
+- name: add table off
+  ansible.builtin.lineinfile:
+    path: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
+    insertafter: '^MTU ='
+    line: 'Table = off'
+  when: warp_native_table_off
+  notify: restart warp
+
+- name: read config for keepalive check
+  ansible.builtin.slurp:
+    path: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
+  register: warp_native_conf_slurp
+
+- name: ensure persistentkeepalive value
+  ansible.builtin.replace:
+    path: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
+    regexp: '^PersistentKeepalive = .*'
+    replace: "PersistentKeepalive = {{ warp_native_keepalive }}"
+  when: (warp_native_conf_slurp.content | b64decode).find('PersistentKeepalive') != -1
+  notify: restart warp
+
+- name: insert persistentkeepalive if missing
+  ansible.builtin.lineinfile:
+    path: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
+    insertafter: '^Endpoint ='
+    line: "PersistentKeepalive = {{ warp_native_keepalive }}"
+  when: (warp_native_conf_slurp.content | b64decode).find('PersistentKeepalive') == -1
+  notify: restart warp
+
+- name: detect global ipv6 presence
+  ansible.builtin.set_fact:
+    warp_native_ipv6_enabled: "{{ (ansible_all_ipv6_addresses | default([])) | select('match','^(?!fe80:)') | list | length > 0 }}"
+
+- name: strip ipv6 inline address when disabled
+  ansible.builtin.replace:
+    path: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
+    regexp: ',\s*[0-9a-fA-F:]+/128'
+    replace: ''
+  when: not warp_native_ipv6_enabled
+  notify: restart warp
+
+- name: remove ipv6 address line when disabled
+  ansible.builtin.lineinfile:
+    path: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
+    regexp: '^Address = .*:[0-9a-fA-F:]+/128'
+    state: absent
+  when: not warp_native_ipv6_enabled
+  notify: restart warp
+
+- name: start and enable warp
+  ansible.builtin.systemd:
+    name: "wg-quick@{{ warp_native_conf_name | splitext | first }}"
+    state: started
+    enabled: "{{ warp_native_enable }}"
+    daemon_reload: true

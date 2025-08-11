@@ -1,0 +1,29 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: check wg binary
+      ansible.builtin.stat:
+        path: /usr/local/bin/wgcf
+      register: s1
+
+    - name: assert wgcf present
+      ansible.builtin.assert:
+        that: s1.stat.exists
+
+    - name: check service status
+      ansible.builtin.command: systemctl is-active wg-quick@warp
+      register: svc
+      changed_when: false
+      failed_when: false
+
+    - name: assert service active or activating
+      ansible.builtin.assert:
+        that: "'inactive' not in svc.stdout"
+
+    - name: run role absent
+      ansible.builtin.include_role:
+        name: ansible-role-warp-native
+      vars:
+        warp_native_state: absent
+        warp_native_purge_all: true

@@ -1,0 +1,4 @@
+profiles:
+  production: true
+exclude_paths:
+  - molecule/*/.cache

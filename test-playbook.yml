@@ -1,0 +1,12 @@
+---
+- name: Test warp_native role
+  hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    # Настройте переменные под ваши нужды
+    warp_native_check_retries: 5
+    warp_native_check_delay: 10
+    warp_native_conf_name: "warp0.conf"
+  roles:
+    - warp_native 

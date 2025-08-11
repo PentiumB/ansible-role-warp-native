@@ -1,0 +1,6 @@
+---
+- name: restart warp
+  ansible.builtin.systemd:
+    name: "wg-quick@{{ warp_native_conf_name | splitext | first }}"
+    state: restarted
+    daemon_reload: true

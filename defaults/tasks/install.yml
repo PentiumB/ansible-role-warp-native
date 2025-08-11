@@ -1,0 +1,23 @@
+---
+- name: ensure wireguard installed on debian family
+  ansible.builtin.apt:
+    name: wireguard
+    state: present
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: backup resolv.conf
+  ansible.builtin.copy:
+    src: /etc/resolv.conf
+    dest: /etc/resolv.conf.backup
+    remote_src: true
+    force: false
+  when: warp_native_modify_resolv
+
+- name: set temporary resolv.conf
+  ansible.builtin.copy:
+    content: |
+      {% for ns in warp_native_temp_nameservers %}nameserver {{ ns }}
+      {% endfor %}
+    dest: /etc/resolv.conf
+  when: warp_native_modify_resolv
