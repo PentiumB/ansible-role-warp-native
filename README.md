@@ -15,15 +15,45 @@ An Ansible role that installs and configures Cloudflare WARP using wgcf and Wire
 
 ## Role Variables
 
-See `defaults/main.yml` for all available variables.
-
 ### Main Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `warp_native_state` | `present` | State of WARP installation (`present`/`absent`) |
-| `warp_native_interface` | `warp0` | WireGuard interface name |
-| `warp_native_config_path` | `/etc/wireguard` | Path to WireGuard configuration |
+| `warp_native_modify_resolv` | `false` | Whether to modify /etc/resolv.conf |
+| `warp_native_temp_nameservers` | `["1.1.1.1", "8.8.8.8"]` | Temporary DNS servers during setup |
+
+### wgcf Configuration
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `warp_native_wgcf_version` | `latest` | Version of wgcf to install |
+| `warp_native_wgcf_install_path` | `/usr/local/bin/wgcf` | Installation path for wgcf binary |
+
+### WireGuard Configuration
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `warp_native_conf_dir` | `/etc/wireguard` | WireGuard configuration directory |
+| `warp_native_conf_name` | `warp.conf` | WireGuard configuration file name |
+| `warp_native_enable` | `true` | Enable WireGuard service on boot |
+| `warp_native_keepalive` | `25` | WireGuard keepalive interval |
+| `warp_native_table_off` | `true` | Disable WireGuard routing table |
+
+### Verification Settings
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `warp_native_check_retries` | `10` | Number of connection check retries |
+| `warp_native_check_delay` | `1` | Delay between retries (seconds) |
+
+### Cleanup Settings
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `warp_native_purge_all` | `true` | Remove all WARP-related files on uninstall |
+| `warp_native_remove_wireguard_pkg` | `false` | Remove WireGuard package on uninstall |
+| `warp_native_cleanup_dns_backup` | `true` | Clean up DNS backup files |
 
 ## Dependencies
 
@@ -35,31 +65,32 @@ ansible-galaxy collection install community.general
 
 ## Example Playbook
 
+### Install WARP (default settings)
+
+```yaml
+- hosts: servers
+  become: yes
+  roles:
+    - role: melbine.warp_native
+```
+
+### Install WARP with custom settings
+
 ```yaml
 - hosts: servers
   become: yes
   roles:
     - role: melbine.warp_native
       vars:
-        warp_native_state: present
-        warp_native_interface: warp0
-```
-
-### Install WARP
-
-```yaml
-- hosts: warp_servers
-  become: yes
-  roles:
-    - role: melbine.warp_native
-      vars:
-        warp_native_state: present
+        warp_native_modify_resolv: true
+        warp_native_keepalive: 30
+        warp_native_conf_name: "custom-warp.conf"
 ```
 
 ### Remove WARP
 
 ```yaml
-- hosts: warp_servers
+- hosts: servers
   become: yes
   roles:
     - role: melbine.warp_native

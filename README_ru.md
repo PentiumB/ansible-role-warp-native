@@ -15,15 +15,45 @@ Ansible роль для установки и настройки Cloudflare WARP
 
 ## Переменные роли
 
-Все доступные переменные см. в `defaults/main.yml`.
-
 ### Основные переменные
 
 | Переменная | По умолчанию | Описание |
 |------------|--------------|----------|
 | `warp_native_state` | `present` | Состояние установки WARP (`present`/`absent`) |
-| `warp_native_interface` | `warp0` | Имя WireGuard интерфейса |
-| `warp_native_config_path` | `/etc/wireguard` | Путь к конфигурации WireGuard |
+| `warp_native_modify_resolv` | `false` | Изменять ли /etc/resolv.conf |
+| `warp_native_temp_nameservers` | `["1.1.1.1", "8.8.8.8"]` | Временные DNS серверы во время настройки |
+
+### Настройки wgcf
+
+| Переменная | По умолчанию | Описание |
+|------------|--------------|----------|
+| `warp_native_wgcf_version` | `latest` | Версия wgcf для установки |
+| `warp_native_wgcf_install_path` | `/usr/local/bin/wgcf` | Путь установки бинарного файла wgcf |
+
+### Настройки WireGuard
+
+| Переменная | По умолчанию | Описание |
+|------------|--------------|----------|
+| `warp_native_conf_dir` | `/etc/wireguard` | Директория конфигурации WireGuard |
+| `warp_native_conf_name` | `warp.conf` | Имя файла конфигурации WireGuard |
+| `warp_native_enable` | `true` | Включить службу WireGuard при загрузке |
+| `warp_native_keepalive` | `25` | Интервал keepalive для WireGuard |
+| `warp_native_table_off` | `true` | Отключить таблицу маршрутизации WireGuard |
+
+### Настройки проверки
+
+| Переменная | По умолчанию | Описание |
+|------------|--------------|----------|
+| `warp_native_check_retries` | `10` | Количество попыток проверки соединения |
+| `warp_native_check_delay` | `1` | Задержка между попытками (секунды) |
+
+### Настройки очистки
+
+| Переменная | По умолчанию | Описание |
+|------------|--------------|----------|
+| `warp_native_purge_all` | `true` | Удалить все файлы WARP при деинсталляции |
+| `warp_native_remove_wireguard_pkg` | `false` | Удалить пакет WireGuard при деинсталляции |
+| `warp_native_cleanup_dns_backup` | `true` | Очистить файлы резервных копий DNS |
 
 ## Зависимости
 
@@ -35,31 +65,32 @@ ansible-galaxy collection install community.general
 
 ## Пример playbook
 
+### Установка WARP (настройки по умолчанию)
+
+```yaml
+- hosts: servers
+  become: yes
+  roles:
+    - role: melbine.warp_native
+```
+
+### Установка WARP с пользовательскими настройками
+
 ```yaml
 - hosts: servers
   become: yes
   roles:
     - role: melbine.warp_native
       vars:
-        warp_native_state: present
-        warp_native_interface: warp0
-```
-
-### Установка WARP
-
-```yaml
-- hosts: warp_servers
-  become: yes
-  roles:
-    - role: melbine.warp_native
-      vars:
-        warp_native_state: present
+        warp_native_modify_resolv: true
+        warp_native_keepalive: 30
+        warp_native_conf_name: "custom-warp.conf"
 ```
 
 ### Удаление WARP
 
 ```yaml
-- hosts: warp_servers
+- hosts: servers
   become: yes
   roles:
     - role: melbine.warp_native

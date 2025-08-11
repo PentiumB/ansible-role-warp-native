@@ -1,9 +1,0 @@
----
-- name: Test warp_native role
-  hosts: localhost
-  connection: local
-  become: yes
-  vars:
-    warp_native_state: absent
-  roles:
-    - role: ./

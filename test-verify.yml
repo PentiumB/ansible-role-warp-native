@@ -1,8 +1,0 @@
----
-- name: Test verification tasks only
-  hosts: localhost
-  connection: local
-  become: yes
-  tasks:
-    - name: Include verify tasks
-      include_tasks: tasks/verify.yml 
