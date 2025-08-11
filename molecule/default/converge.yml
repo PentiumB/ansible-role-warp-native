@@ -1,8 +1,0 @@
----
-- hosts: all
-  gather_facts: true
-  become: true
-  roles:
-    - role: ansible-role-warp-native
-      vars:
-        warp_native_state: present

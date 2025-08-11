@@ -1,0 +1,59 @@
+# Ansible
+*.retry
+.ansible/
+ansible.cfg
+inventory.ini
+inventory.yml
+inventory.yaml
+hosts
+site.retry
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+# Inventory
+
+inventory.ini
+
+# Virtual environments
+venv/
+env/
+ENV/
+.env
+.venv
+
+# Testing
+.tox/
+.coverage
+.pytest_cache/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Local test files
+test-*.yml
+test-*.yaml
+test.sh
+
+# Vagrant
+.vagrant/
+*.box
+
+# Docker
+docker-compose.override.yml 

@@ -3,13 +3,17 @@
   ansible.builtin.file:
     path: "{{ warp_native_conf_dir }}"
     state: directory
-    mode: "0755"
+    mode: "0700"
 
 - name: copy generated profile
   ansible.builtin.copy:
     src: "{{ ansible_env.HOME }}/wgcf-profile.conf"
     dest: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
     remote_src: true
+    owner: root
+    group: root
+    mode: "0600"
+    force: no
   notify: restart warp
 
 - name: remove dns line
@@ -24,8 +28,8 @@
     path: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
     insertafter: '^MTU ='
     line: 'Table = off'
-  when: warp_native_table_off
-  notify: restart warp
+    regexp: '^Table = off$'
+    state: present
 
 - name: read config for keepalive check
   ansible.builtin.slurp:
@@ -33,12 +37,11 @@
   register: warp_native_conf_slurp
 
 - name: ensure persistentkeepalive value
-  ansible.builtin.replace:
+  ansible.builtin.lineinfile:
     path: "{{ warp_native_conf_dir }}/{{ warp_native_conf_name }}"
-    regexp: '^PersistentKeepalive = .*'
-    replace: "PersistentKeepalive = {{ warp_native_keepalive }}"
-  when: (warp_native_conf_slurp.content | b64decode).find('PersistentKeepalive') != -1
-  notify: restart warp
+    regexp: '^PersistentKeepalive = {{ warp_native_keepalive }}$'
+    line: "PersistentKeepalive = {{ warp_native_keepalive }}"
+    state: present
 
 - name: insert persistentkeepalive if missing
   ansible.builtin.lineinfile:

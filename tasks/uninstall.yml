@@ -4,7 +4,7 @@
     name: "wg-quick@{{ warp_native_conf_name | splitext | first }}"
     state: stopped
     enabled: false
-    masked: true
+    masked: false
     daemon_reload: true
   failed_when: false
 

@@ -27,10 +27,11 @@
     mode: "0755"
 
 - name: register wgcf account
-  community.general.expect:
+  ansible.builtin.expect:
     command: "{{ warp_native_wgcf_install_path }} register"
     responses:
-      "Do you accept": "y"
+      "Do you agree\\?": "Yes"
+    timeout: 30
   args:
     chdir: "{{ ansible_env.HOME }}"
   register: warp_native_register
