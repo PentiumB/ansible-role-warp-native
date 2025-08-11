@@ -51,9 +51,9 @@ Ansible роль для установки и настройки Cloudflare WARP
 
 | Переменная | По умолчанию | Описание |
 |------------|--------------|----------|
-| `warp_native_purge_all` | `true` | Удалить все файлы WARP при деинсталляции |
+| `warp_native_purge_all` | `false` | Удалить все файлы WARP при деинсталляции |
 | `warp_native_remove_wireguard_pkg` | `false` | Удалить пакет WireGuard при деинсталляции |
-| `warp_native_cleanup_dns_backup` | `true` | Очистить файлы резервных копий DNS |
+| `warp_native_cleanup_dns_backup` | `false` | Очистить файлы резервных копий DNS |
 
 ## Зависимости
 
@@ -63,40 +63,37 @@ Ansible роль для установки и настройки Cloudflare WARP
 ansible-galaxy collection install community.general
 ```
 
-## Пример playbook
+## Пример использования
 
-### Установка WARP (настройки по умолчанию)
-
-```yaml
-- hosts: servers
-  become: yes
-  roles:
-    - role: melbine.warp_native
-```
-
-### Установка WARP с пользовательскими настройками
+### Базовый playbook
 
 ```yaml
-- hosts: servers
+- hosts: warp_servers
   become: yes
   roles:
-    - role: melbine.warp_native
-      vars:
-        warp_native_modify_resolv: true
-        warp_native_keepalive: 30
-        warp_native_conf_name: "custom-warp.conf"
+    - melbine.warp_native
 ```
 
-### Удаление WARP
+### Групповые переменные
+
+Создайте групповые переменные в `group_vars/warp_servers.yml`:
 
 ```yaml
-- hosts: servers
-  become: yes
-  roles:
-    - role: melbine.warp_native
-      vars:
-        warp_native_state: absent
+# Установить WARP
+warp_native_state: present
+
+# Опционально: Изменить настройки DNS
+warp_native_modify_resolv: true
+warp_native_temp_nameservers:
+  - "1.1.1.1"
+  - "8.8.8.8"
+
+# Опционально: Пользовательские настройки WireGuard
+warp_native_keepalive: 30
+warp_native_conf_name: "company-warp.conf"
 ```
+
+Для удаления установите `warp_native_state: absent` в групповых переменных.
 
 ## Лицензия
 

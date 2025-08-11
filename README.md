@@ -51,9 +51,9 @@ An Ansible role that installs and configures Cloudflare WARP using wgcf and Wire
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `warp_native_purge_all` | `true` | Remove all WARP-related files on uninstall |
+| `warp_native_purge_all` | `false` | Remove all WARP-related files on uninstall |
 | `warp_native_remove_wireguard_pkg` | `false` | Remove WireGuard package on uninstall |
-| `warp_native_cleanup_dns_backup` | `true` | Clean up DNS backup files |
+| `warp_native_cleanup_dns_backup` | `false` | Clean up DNS backup files |
 
 ## Dependencies
 
@@ -63,40 +63,37 @@ This role requires the `community.general` collection. Install it with:
 ansible-galaxy collection install community.general
 ```
 
-## Example Playbook
+## Example Usage
 
-### Install WARP (default settings)
-
-```yaml
-- hosts: servers
-  become: yes
-  roles:
-    - role: melbine.warp_native
-```
-
-### Install WARP with custom settings
+### Basic playbook
 
 ```yaml
-- hosts: servers
+- hosts: warp_servers
   become: yes
   roles:
-    - role: melbine.warp_native
-      vars:
-        warp_native_modify_resolv: true
-        warp_native_keepalive: 30
-        warp_native_conf_name: "custom-warp.conf"
+    - melbine.warp_native
 ```
 
-### Remove WARP
+### Group variables
+
+Create group variables in `group_vars/warp_servers.yml`:
 
 ```yaml
-- hosts: servers
-  become: yes
-  roles:
-    - role: melbine.warp_native
-      vars:
-        warp_native_state: absent
+# Install WARP
+warp_native_state: present
+
+# Optional: Modify DNS settings
+warp_native_modify_resolv: true
+warp_native_temp_nameservers:
+  - "1.1.1.1"
+  - "8.8.8.8"
+
+# Optional: Custom WireGuard settings
+warp_native_keepalive: 30
+warp_native_conf_name: "company-warp.conf"
 ```
+
+For removal, set `warp_native_state: absent` in group variables.
 
 ## License
 
