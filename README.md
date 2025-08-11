@@ -10,7 +10,6 @@ An Ansible role that installs and configures Cloudflare WARP using wgcf and Wire
 ## Requirements
 
 - Ansible >= 2.14
-- Collections: `community.general`
 - Target systems: Debian 11/12, Ubuntu 20.04/22.04/24.04
 
 ## Role Variables
@@ -56,14 +55,6 @@ An Ansible role that installs and configures Cloudflare WARP using wgcf and Wire
 | `warp_native_purge_all` | `false` | Remove all WARP-related files on uninstall |
 | `warp_native_remove_wireguard_pkg` | `false` | Remove WireGuard package on uninstall |
 | `warp_native_cleanup_dns_backup` | `false` | Clean up DNS backup files |
-
-## Dependencies
-
-This role requires the `community.general` collection. Install it with:
-
-```bash
-ansible-galaxy collection install community.general
-```
 
 ## Installation
 

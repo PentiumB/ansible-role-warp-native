@@ -10,7 +10,6 @@ Ansible роль для установки и настройки Cloudflare WARP
 ## Требования
 
 - Ansible >= 2.14
-- Коллекции: `community.general`
 - Целевые системы: Debian 11/12, Ubuntu 20.04/22.04/24.04
 
 ## Переменные роли
@@ -56,14 +55,6 @@ Ansible роль для установки и настройки Cloudflare WARP
 | `warp_native_purge_all` | `false` | Удалить все файлы WARP при деинсталляции |
 | `warp_native_remove_wireguard_pkg` | `false` | Удалить пакет WireGuard при деинсталляции |
 | `warp_native_cleanup_dns_backup` | `false` | Очистить файлы резервных копий DNS |
-
-## Зависимости
-
-Эта роль требует коллекцию `community.general`. Установите её командой:
-
-```bash
-ansible-galaxy collection install community.general
-```
 
 ## Установка
 
