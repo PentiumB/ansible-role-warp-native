@@ -35,10 +35,12 @@ An Ansible role that installs and configures Cloudflare WARP using wgcf and Wire
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `warp_native_conf_dir` | `/etc/wireguard` | WireGuard configuration directory |
-| `warp_native_conf_name` | `warp.conf` | WireGuard configuration file name |
+| `warp_native_conf_name` | `warp.conf` | WireGuard configuration file name (also determines interface name) |
 | `warp_native_enable` | `true` | Enable WireGuard service on boot |
 | `warp_native_keepalive` | `25` | WireGuard keepalive interval |
 | `warp_native_table_off` | `true` | Disable WireGuard routing table |
+
+> **Note:** The `warp_native_conf_name` variable determines both the configuration file name and the WireGuard interface name. For example, `warp.conf` creates interface `warp`, and `custom-vpn.conf` creates interface `custom-vpn`.
 
 ### Verification Settings
 
@@ -96,7 +98,7 @@ warp_native_temp_nameservers:
 
 # Optional: Custom WireGuard settings
 warp_native_keepalive: 30
-warp_native_conf_name: "company-warp.conf"
+warp_native_conf_name: "company-warp.conf"  # Creates interface 'company-warp'
 ```
 
 For removal, set `warp_native_state: absent` in group variables.

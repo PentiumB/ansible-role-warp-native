@@ -35,10 +35,12 @@ Ansible роль для установки и настройки Cloudflare WARP
 | Переменная | По умолчанию | Описание |
 |------------|--------------|----------|
 | `warp_native_conf_dir` | `/etc/wireguard` | Директория конфигурации WireGuard |
-| `warp_native_conf_name` | `warp.conf` | Имя файла конфигурации WireGuard |
+| `warp_native_conf_name` | `warp.conf` | Имя файла конфигурации WireGuard (также определяет имя интерфейса) |
 | `warp_native_enable` | `true` | Включить службу WireGuard при загрузке |
 | `warp_native_keepalive` | `25` | Интервал keepalive для WireGuard |
 | `warp_native_table_off` | `true` | Отключить таблицу маршрутизации WireGuard |
+
+> **Примечание:** Переменная `warp_native_conf_name` определяет как имя файла конфигурации, так и имя WireGuard интерфейса. Например, `warp.conf` создает интерфейс `warp`, а `custom-vpn.conf` создает интерфейс `custom-vpn`.
 
 ### Настройки проверки
 
@@ -96,7 +98,7 @@ warp_native_temp_nameservers:
 
 # Опционально: Пользовательские настройки WireGuard
 warp_native_keepalive: 30
-warp_native_conf_name: "company-warp.conf"
+warp_native_conf_name: "company-warp.conf"  # Создаст интерфейс 'company-warp'
 ```
 
 Для удаления установите `warp_native_state: absent` в групповых переменных.
